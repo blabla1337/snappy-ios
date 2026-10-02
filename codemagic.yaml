@@ -8,7 +8,11 @@ workflows:
     environment:
       java: 17
     scripts:
-      - name: Generate wrapper
+      # Single step: observed on linux_x2 that the wrapper files produced in a
+      # prior `script` entry were missing from the next one. Collapsing to one
+      # script keeps everything in the same shell execution so the generated
+      # gradlew is guaranteed to be present at build time.
+      - name: Generate wrapper and build debug APK
         script: |
           # The system Gradle on this image is 8.1.1. Running `gradle wrapper`
           # inside android/ would evaluate build.gradle.kts and apply AGP,
@@ -24,8 +28,7 @@ workflows:
           cp /tmp/gw/gradlew.bat android/gradlew.bat
           cp /tmp/gw/gradle/wrapper/gradle-wrapper.jar android/gradle/wrapper/gradle-wrapper.jar
           chmod +x android/gradlew
-      - name: Build debug APK
-        script: cd android && ./gradlew assembleDebug
+          cd android && ./gradlew assembleDebug
     artifacts:
       - android/app/build/outputs/**/*.apk
 
