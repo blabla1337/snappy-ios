@@ -1,0 +1,33 @@
+name: SnapWeb
+options:
+  bundleIdPrefix: com.example
+  deploymentTarget:
+    iOS: "15.0"
+settings:
+  base:
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    PRODUCT_BUNDLE_IDENTIFIER: com.example.snapweb
+    GENERATE_INFOPLIST_FILE: YES
+    INFOPLIST_KEY_UILaunchScreen_Generation: YES
+    INFOPLIST_KEY_NSCameraUsageDescription: "Used by Snapchat Web for snaps and video calls."
+    INFOPLIST_KEY_NSMicrophoneUsageDescription: "Used by Snapchat Web for voice and video calls."
+    TARGETED_DEVICE_FAMILY: "1,2"
+targets:
+  SnapWeb:
+    type: application
+    platform: iOS
+    sources:
+      - Sources
+    settings:
+      base:
+        # Default to unsigned so simulator builds need no Apple account.
+        # For a device IPA, set your team + signing (see README).
+        CODE_SIGNING_ALLOWED: NO
+schemes:
+  SnapWeb:
+    build:
+      targets:
+        SnapWeb: all
+    run:
+      config: Debug

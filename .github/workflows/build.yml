@@ -1,0 +1,64 @@
+name: Build apps
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: android-actions/setup-android@v3
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.7"
+
+      # The binary gradle-wrapper.jar isn't committed; generate it here so
+      # ./gradlew exists. (Opening the project in Android Studio also creates it.)
+      - name: Generate Gradle wrapper
+        working-directory: android
+        run: gradle wrapper --gradle-version 8.7
+
+      - name: Build debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: snapweb-android-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # XcodeGen turns project.yml into a real .xcodeproj (nothing fragile to commit).
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        working-directory: ios
+        run: xcodegen generate
+
+      # Unsigned simulator build — compiles with NO Apple account, proving the
+      # project is sound. A device-installable IPA needs signing (see README).
+      - name: Build (unsigned, simulator)
+        working-directory: ios
+        run: |
+          xcodebuild \
+            -project SnapWeb.xcodeproj \
+            -scheme SnapWeb \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO \
+            build

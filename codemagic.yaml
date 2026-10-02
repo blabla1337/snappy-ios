@@ -1,0 +1,29 @@
+# Starter config for Codemagic (https://codemagic.io). Verify instance_type
+# names and image versions against current Codemagic docs before relying on it.
+# GitHub Actions in .github/workflows/build.yml is the fully-wired path.
+workflows:
+  android:
+    name: SnapWeb Android
+    instance_type: linux_x2
+    environment:
+      java: 17
+    scripts:
+      - name: Generate wrapper
+        script: cd android && gradle wrapper --gradle-version 8.7
+      - name: Build debug APK
+        script: cd android && ./gradlew assembleDebug
+    artifacts:
+      - android/app/build/outputs/**/*.apk
+
+  ios_simulator:
+    name: SnapWeb iOS (unsigned simulator)
+    instance_type: mac_mini_m2
+    scripts:
+      - name: Generate Xcode project
+        script: cd ios && brew install xcodegen && xcodegen generate
+      - name: Build unsigned
+        script: |
+          cd ios && xcodebuild \
+            -project SnapWeb.xcodeproj -scheme SnapWeb \
+            -sdk iphonesimulator -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO build
