@@ -8,6 +8,22 @@ workflows:
     environment:
       java: 17
     scripts:
+      - name: Generate wrapper
+        script: |
+          # The system Gradle on this image is 8.1.1. Running `gradle wrapper`
+          # inside android/ would evaluate build.gradle.kts and apply AGP,
+          # which requires 8.7+, so the step fails before it can rewrite the
+          # wrapper. Generate the wrapper in a scratch dir (no AGP on the
+          # classpath), then copy the artefacts into android/.
+          set -eux
+          mkdir -p /tmp/gw && cd /tmp/gw
+          : > settings.gradle
+          gradle wrapper --gradle-version 8.7 --distribution-type all
+          cd -
+          cp /tmp/gw/gradlew android/gradlew
+          cp /tmp/gw/gradlew.bat android/gradlew.bat
+          cp /tmp/gw/gradle/wrapper/gradle-wrapper.jar android/gradle/wrapper/gradle-wrapper.jar
+          chmod +x android/gradlew
       - name: Build debug APK
         script: cd android && ./gradlew assembleDebug
     artifacts:
