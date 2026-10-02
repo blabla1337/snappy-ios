@@ -8,8 +8,6 @@ workflows:
     environment:
       java: 17
     scripts:
-      - name: Generate wrapper
-        script: cd android && gradle wrapper --gradle-version 8.7
       - name: Build debug APK
         script: cd android && ./gradlew assembleDebug
     artifacts:
