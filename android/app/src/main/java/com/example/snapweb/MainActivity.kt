@@ -77,9 +77,9 @@ class MainActivity : ComponentActivity() {
                 displayZoomControls = false
             }
 
-            CookieManager.getInstance().apply {
-                setAcceptCookie(true)
-                setAcceptThirdPartyCookies(this@apply, true)
+            CookieManager.getInstance().also {
+                it.setAcceptCookie(true)
+                it.setAcceptThirdPartyCookies(this, true)
             }
 
             if (WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)) {
