@@ -56,7 +56,7 @@
           XCODE_SCHEME: "SnapWeb"
           APP_STORE_APP_ID: 6818642219
       integrations:
-        app_store_connect: codemagic
+        app_store_connect: 1337
       scripts:
         - name: Generate Xcode project
           script: cd ios && brew install xcodegen && xcodegen generate
