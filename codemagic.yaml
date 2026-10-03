@@ -57,9 +57,7 @@ workflows:
         APP_STORE_APP_ID: 6818742006
     integrations:
       # Integration name as configured in Codemagic team/app settings.
-      # Quoted because the configured name starts with a digit — unquoted it
-      # would be parsed as an integer and the Codemagic schema rejects that.
-      app_store_connect: "1337"
+      app_store_connect: codemagic
     scripts:
       - name: Generate Xcode project
         script: cd ios && brew install xcodegen && xcodegen generate
