@@ -67,7 +67,9 @@ workflows:
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE --create
           keychain add-certificates
-          xcode-project use-profiles
+          # Explicit --project so use-profiles finds the xcodeproj in ios/
+          # (it defaults to searching cwd, which is the clone root here).
+          xcode-project use-profiles --project "ios/$XCODE_PROJECT"
       - name: Bump build number
         script: |
           cd ios
